@@ -1,0 +1,222 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
+    --teal:#1aab8a;--teal-dim:#0f6e56;--teal-glow:#1aab8a33;
+    --amber:#e8a020;--amber-dim:#ba7517;
+    --green:#4caf50;--red:#e53935;
+    --text:#e6edf3;--muted:#8b949e;--border:#30363d;
+  }
+  body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0}
+  #app{max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem}
+
+  .header{text-align:center;padding:1.5rem 0 1rem}
+  .header h1{font-family:'Prompt',sans-serif;font-size:1.6rem;font-weight:700;color:var(--teal);letter-spacing:-0.5px}
+  .header p{font-size:0.85rem;color:var(--muted);margin-top:4px}
+
+  .progress-wrap{background:var(--surface2);border-radius:8px;height:6px;margin-bottom:1.2rem;overflow:hidden}
+  .progress-bar{height:100%;background:var(--teal);border-radius:8px;transition:width 0.5s ease}
+
+  .score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+  .score-badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:0.82rem;color:var(--muted)}
+  .score-badge span{color:var(--amber);font-weight:600}
+  .q-num{font-size:0.82rem;color:var(--muted)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+  .category-tag{display:inline-block;background:var(--teal-glow);color:var(--teal);font-size:0.72rem;padding:3px 10px;border-radius:12px;margin-bottom:10px;font-weight:500}
+  .question{font-family:'Prompt',sans-serif;font-size:1.05rem;font-weight:500;line-height:1.6;color:var(--text)}
+
+  .options{display:flex;flex-direction:column;gap:10px;margin-top:0.5rem}
+  .opt-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:0.85rem 1rem;text-align:left;color:var(--text);font-family:'Sarabun',sans-serif;font-size:0.93rem;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;gap:10px}
+  .opt-btn:hover:not(:disabled){border-color:var(--teal);background:#1aab8a15;transform:translateX(3px)}
+  .opt-label{width:26px;height:26px;border-radius:6px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:600;flex-shrink:0;transition:all 0.18s}
+  .opt-text{flex:1;line-height:1.4}
+
+  .opt-btn.correct{border-color:var(--green);background:#4caf5022}
+  .opt-btn.correct .opt-label{background:var(--green);border-color:var(--green);color:#fff}
+  .opt-btn.wrong{border-color:var(--red);background:#e5393522}
+  .opt-btn.wrong .opt-label{background:var(--red);border-color:var(--red);color:#fff}
+  .opt-btn.reveal-correct{border-color:var(--green);background:#4caf5012}
+  .opt-btn.reveal-correct .opt-label{background:#4caf5033;border-color:var(--green);color:var(--green)}
+  .opt-btn:disabled{cursor:default}
+
+  .feedback{border-radius:10px;padding:0.9rem 1rem;font-size:0.87rem;line-height:1.6;margin-top:0;opacity:0;transition:opacity 0.3s}
+  .feedback.show{opacity:1}
+  .feedback.correct{background:#4caf5015;border:1px solid #4caf5040;color:#81c784}
+  .feedback.wrong{background:#e5393515;border:1px solid #e5393540;color:#ef9a9a}
+
+  .nav-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:10px;padding:0.9rem;font-family:'Prompt',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:0.8rem}
+  .nav-btn:hover{background:var(--teal-dim);transform:translateY(-1px)}
+  .nav-btn:active{transform:translateY(0)}
+
+  .result-screen{text-align:center;padding:2rem 1rem}
+  .result-screen h2{font-family:'Prompt',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:0.4rem}
+  .big-score{font-size:4rem;font-weight:700;color:var(--teal);font-family:'Prompt',sans-serif;line-height:1}
+  .score-sub{color:var(--muted);font-size:0.88rem;margin:4px 0 1.5rem}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:1.2rem 0}
+  .r-card{background:var(--surface2);border-radius:10px;padding:0.9rem 0.6rem;border:1px solid var(--border)}
+  .r-card .num{font-size:1.5rem;font-weight:700;font-family:'Prompt',sans-serif}
+  .r-card .lbl{font-size:0.75rem;color:var(--muted);margin-top:2px}
+  .grade{font-size:1rem;color:var(--amber);margin-bottom:1.2rem;font-weight:500}
+  .restart-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:0.85rem 2.5rem;font-family:'Prompt',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer}
+  .restart-btn:hover{background:var(--teal-dim)}
+
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-top:1rem;text-align:left}
+  .summary-card h3{font-family:'Prompt',sans-serif;font-size:0.9rem;color:var(--muted);margin-bottom:0.8rem}
+  .sum-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:0.83rem;padding:6px 0;border-bottom:1px solid var(--border)}
+  .sum-item:last-child{border-bottom:none;margin-bottom:0}
+  .sum-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;margin-top:1px}
+  .sum-icon.c{background:#4caf5030;color:var(--green)}
+  .sum-icon.w{background:#e5393530;color:var(--red)}
+</style>
+<link rel="icon" href = "img/icon.png">
+<div id="app">
+  <div class="header">
+    <h1>🐾 พฤติกรรมสัตว์ Quiz</h1>
+    <p>ทดสอบความรู้ชีววิทยา ม.ปลาย</p>
+  </div>
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+const questions = [
+  {cat:"พฤติกรรมที่ถ่ายทอดทางพันธุกรรม",q:"พฤติกรรมแบบใดที่เกิดขึ้นตั้งแต่แรกเกิด โดยไม่ต้องผ่านการเรียนรู้?",opts:["พฤติกรรมแบบมีเงื่อนไข (Classical Conditioning)","พฤติกรรมแบบสัญชาตญาณ (Instinct)","พฤติกรรมแบบลองผิดลองถูก","พฤติกรรมการเลียนแบบ"],ans:1,
+  exp:"พฤติกรรมแบบสัญชาตญาณ (Instinct) เป็นพฤติกรรมมีมาแต่กำเนิด ถ่ายทอดทางพันธุกรรม เช่น ลูกนกอ้าปากรับอาหาร ลูกเต่าคืบเข้าหาทะเล"},
+  {cat:"Kinesis และ Taxis",q:"การที่แมลงสาบวิ่งหนีออกจากแสงสว่าง จัดเป็นพฤติกรรมประเภทใด?",opts:["Kinesis — เคลื่อนที่ไม่มีทิศทาง","Phototaxis เชิงลบ (Negative Phototaxis)","Chemotaxis เชิงบวก","Geotaxis เชิงลบ"],ans:1,
+  exp:"Phototaxis เชิงลบ คือพฤติกรรมที่สัตว์เคลื่อนที่หนีออกจากแสง ต่างจาก Kinesis ที่เป็นการเคลื่อนที่แบบสุ่มโดยไม่มีทิศทางแน่นอน"},
+  {cat:"การเรียนรู้",q:"การที่สุนัขน้ำลายไหลเมื่อได้ยินเสียงกระดิ่ง (การทดลองของ Pavlov) เรียกว่าอะไร?",opts:["Operant Conditioning","Habituation","Classical Conditioning","Insight Learning"],ans:2,
+  exp:"Classical Conditioning หรือการวางเงื่อนไขแบบคลาสสิก คือการที่สิ่งมีชีวิตเรียนรู้ว่า สิ่งเร้ากลาง (กระดิ่ง) เกี่ยวข้องกับสิ่งเร้าที่มีความหมาย (อาหาร) จนเกิดการตอบสนองแบบเดียวกัน"},
+  {cat:"การเรียนรู้",q:"ข้อใดคือตัวอย่างของ Habituation (การลดการตอบสนอง)?",opts:["หนูกดคันโยกเพื่อรับอาหาร","หอยทากหดตัวน้อยลงเมื่อโดนแตะซ้ำๆ","ลิงใช้ไม้เขี่ยกล้วย","นกร้องเพลงเลียนแบบนกตัวอื่น"],ans:1,
+  exp:"Habituation คือการที่สัตว์ตอบสนองต่อสิ่งเร้าน้อยลงเรื่อยๆ เมื่อสิ่งเร้าไม่ก่อให้เกิดอันตรายหรือประโยชน์ เป็นรูปแบบการเรียนรู้ที่ง่ายที่สุด"},
+  {cat:"การสื่อสาร",q:"การเต้นรำของผึ้งงาน (Waggle Dance) ใช้ในการสื่อสารเรื่องใด?",opts:["เลือกราชินีตัวใหม่","แสดงการครอบครองอาณาเขต","บอกทิศทางและระยะห่างของแหล่งอาหาร","เรียกหาคู่ผสมพันธุ์"],ans:2,
+  exp:"การเต้นรำ Waggle Dance ของผึ้งค้นพบโดย Karl von Frisch โดยมุมของการเต้นบอกทิศทาง (สัมพันธ์กับดวงอาทิตย์) และความเร็วของการสั่นบอกระยะทางของแหล่งอาหาร"},
+  {cat:"Imprinting",q:"ลูกห่าน (Gosling) ที่เพิ่งฟักออกมาเดินตามมนุษย์แทนแม่ของตัวเอง จัดเป็นปรากฏการณ์ใด?",opts:["Operant Conditioning","Insight Learning","Imprinting (การฝังใจ)","Taxis เชิงบวก"],ans:2,
+  exp:"Imprinting คือการที่สัตว์บางชนิดในช่วงวิกฤต (Critical Period) หลังเกิดใหม่ จะจดจำสิ่งที่เคลื่อนไหวใกล้ตัวแรกๆ ว่าเป็นแม่ ค้นพบโดย Konrad Lorenz"},
+  {cat:"พฤติกรรมทางสังคม",q:"พฤติกรรมการช่วยเหลือสัตว์อื่นในกลุ่ม โดยไม่คำนึงถึงผลประโยชน์ของตนเอง เรียกว่าอะไร?",opts:["Mutualism","Altruism (การเสียสละ)","Commensalism","Parasitism"],ans:1,
+  exp:"Altruism คือพฤติกรรมที่สัตว์ยอมเสียสละเพื่อประโยชน์ของผู้อื่น เช่น ดิ้นรนเพื่อเบี่ยงเบนผู้ล่าให้ออกจากลูก อธิบายได้ด้วยทฤษฎี Kin Selection"},
+  {cat:"การเรียนรู้",q:"ลิงชิมแปนซีที่หยิบกล่องหลายใบมาต่อกันเพื่อเขี่ยกล้วยบนเพดาน จัดเป็นการเรียนรู้แบบใด?",opts:["Classical Conditioning","Habituation","Trial and Error","Insight Learning (การหยั่งรู้)"],ans:3,
+  exp:"Insight Learning คือการเรียนรู้โดยใช้ความคิดและสติปัญญาแก้ปัญหา โดยไม่ต้องลองผิดลองถูก เป็นรูปแบบการเรียนรู้ขั้นสูงที่พบในสัตว์ที่มีสมองพัฒนาดี"},
+  {cat:"พฤติกรรมสืบพันธุ์",q:"นกยูงตัวผู้ที่แผ่หางประกบเพื่อดึงดูดตัวเมีย เรียกพฤติกรรมนี้ว่าอะไร?",opts:["Agonistic Behavior","Courtship Behavior (พฤติกรรมกฤษณา)","Dominance Hierarchy","Territorial Behavior"],ans:1,
+  exp:"Courtship Behavior คือพฤติกรรมที่สัตว์แสดงออกเพื่อดึงดูดคู่ผสมพันธุ์ มักพบในตัวผู้ เช่น การฟ้อนรำ การร้องเพลง หรือการแสดงสีสัน"},
+  {cat:"พฤติกรรมก้าวร้าว",q:"ในฝูงหมาป่า ตัวที่มีสถานะสูงสุดและควบคุมกลุ่มได้ เรียกว่าอะไร?",opts:["Alpha Wolf","Beta Wolf","Omega Wolf","Gamma Wolf"],ans:0,
+  exp:"Alpha Wolf คือหมาป่าที่มีสถานะสูงสุดใน Dominance Hierarchy โดยจะมีสิทธิ์กินอาหาร ผสมพันธุ์ และนำทีมล่าเหยื่อก่อน เป็นรูปแบบโครงสร้างทางสังคมเพื่อลดความขัดแย้งในกลุ่ม"},
+  {cat:"พฤติกรรมอาณาเขต",q:"สัตว์ชนิดใดใช้การขับสารเคมี (Scent Marking) เพื่อกำหนดอาณาเขต?",
+  opts:["นกอินทรี","หมาจิ้งจอก","ปลาการ์ตูน","ผีเสื้อ"],ans:1,
+  exp:"หมาจิ้งจอกและสัตว์เลี้ยงลูกด้วยนมหลายชนิดใช้ต่อมกลิ่นหรือปัสสาวะทำเครื่องหมายอาณาเขต เรียกว่า Scent Marking เป็นการสื่อสารทางเคมี (Chemical Communication)"},
+  {cat:"Operant Conditioning",q:"หนูกดคันโยกแล้วได้รับอาหาร จึงกดซ้ำบ่อยขึ้น จัดเป็นการเรียนรู้แบบใด?",opts:["Classical Conditioning","Habituation","Operant Conditioning","Insight Learning"],ans:2,
+  exp:"Operant Conditioning หรือการวางเงื่อนไขแบบปฏิบัติการ ค้นพบโดย B.F. Skinner สัตว์เรียนรู้ว่าพฤติกรรมของตนนำมาซึ่งรางวัล (Reinforcement) หรือการลงโทษ (Punishment)"},
+  {cat:"พฤติกรรมที่ถ่ายทอดทางพันธุกรรม",q:"Reflex Arc คืออะไร?",opts:["การเรียนรู้โดยการลองผิดลองถูก","การตอบสนองอัตโนมัติต่อสิ่งเร้าโดยไม่ผ่านสมอง","การส่งสัญญาณเคมีระหว่างเซลล์","พฤติกรรมที่เกิดจากการฝึกฝน"],ans:1,
+  exp:"Reflex Arc คือวงจรประสาทที่ทำให้เกิดการตอบสนองอัตโนมัติโดยไม่ต้องผ่านสมอง เช่น ดึงมือออกจากของร้อน ใช้เวลาน้อยมากเพื่อปกป้องร่างกาย"},
+  {cat:"การสื่อสาร",q:"ฟีโรโมน (Pheromone) คือสารที่ใช้ในการสื่อสารประเภทใด?",opts:["การสื่อสารด้วยเสียง","การสื่อสารด้วยภาษากาย","การสื่อสารทางเคมี","การสื่อสารด้วยแสง"],ans:2,
+  exp:"ฟีโรโมนเป็นสารเคมีที่สัตว์หลั่งออกมาเพื่อสื่อสารกับสมาชิกในสปีชีส์เดียวกัน เช่น ผึ้งใช้ฟีโรโมนเตือนภัย มดใช้ฟีโรโมนนำทางไปหาอาหาร"},
+  {cat:"พฤติกรรมทางสังคม",q:"Kin Selection คืออะไร?",opts:["การคัดเลือกโดยธรรมชาติที่เน้นความแข็งแรงของบุคคล","การที่สัตว์ช่วยเหลือญาติเพื่อให้ยีนส์ถ่ายทอดต่อไป","การแข่งขันระหว่างสปีชีส์","การเลือกคู่ผสมพันธุ์ที่แข็งแรงที่สุด"],ans:1,
+  exp:"Kin Selection คือทฤษฎีที่อธิบาย Altruism ว่าสัตว์ช่วยเหลือญาติเพราะมียีนส์ร่วมกัน การช่วยให้ญาติอยู่รอดก็เหมือนช่วยให้ยีนส์ของตัวเองถ่ายทอดต่อไปทางอ้อม"},
+  {cat:"Kinesis และ Taxis",q:"การที่แบคทีเรียว่ายเข้าหาแหล่งน้ำตาล จัดเป็นพฤติกรรมใด?",opts:["Phototaxis เชิงบวก","Chemotaxis เชิงบวก (Positive Chemotaxis)","Geotaxis เชิงลบ","Kinesis"],ans:1,
+  exp:"Chemotaxis เชิงบวก คือการเคลื่อนที่เข้าหาสารเคมีที่เป็นประโยชน์ เช่น น้ำตาล กรดอะมิโน พบได้ในแบคทีเรียและสัตว์หลายชนิด"},
+  {cat:"พฤติกรรมอาณาเขต",q:"นกตัวผู้ร้องเพลงในตอนเช้า มีจุดประสงค์หลักคืออะไร?",opts:["บอกทิศทางให้ฝูง","ประกาศอาณาเขตและดึงดูดคู่","เตือนภัยนักล่า","เรียกหาอาหาร"],ans:1,
+  exp:"การร้องเพลงของนกตัวผู้มีสองหน้าที่หลักคือ ประกาศอาณาเขต (Territorial Defense) เพื่อเตือนตัวผู้อื่น และดึงดูดตัวเมีย (Mate Attraction) ในฤดูผสมพันธุ์"},
+  {cat:"การเรียนรู้",q:"การที่ลูกนกเรียนร้องเพลงโดยเลียนแบบเสียงพ่อแม่ เรียกว่าอะไร?",opts:["Imprinting","Insight Learning","Observational Learning (การเรียนรู้จากการสังเกต)","Habituation"],ans:2,
+  exp:"Observational Learning หรือ Social Learning คือการเรียนรู้โดยสังเกตและเลียนแบบสัตว์อื่น พบได้ในนก ลิง และสัตว์เลี้ยงลูกด้วยนมหลายชนิด"},
+  {cat:"พฤติกรรมสืบพันธุ์",q:"Fixed Action Pattern (FAP) คือพฤติกรรมลักษณะใด?",opts:["พฤติกรรมที่เปลี่ยนแปลงได้ตามสภาพแวดล้อม","พฤติกรรมที่เกิดจากการเรียนรู้","พฤติกรรมที่เกิดขึ้นสมบูรณ์และไม่เปลี่ยนแปลง เมื่อถูกกระตุ้นด้วย Sign Stimulus","พฤติกรรมที่พบเฉพาะในสัตว์เลี้ยงลูกด้วยนม"],ans:2,
+  exp:"Fixed Action Pattern (FAP) คือชุดพฤติกรรมที่เกิดขึ้นอย่างสมบูรณ์และไม่หยุดกลางคัน เมื่อถูกกระตุ้นด้วย Sign Stimulus เช่น นกกระตุ้นเกาะฟักไข่กลมทุกชนิดรวมถึงลูกบอล"},
+  {cat:"พฤติกรรมทางสังคม",q:"Dominance Hierarchy มีประโยชน์ต่อฝูงสัตว์อย่างไร?",opts:["ทำให้สัตว์แข็งแรงขึ้น","ลดความขัดแย้งและจัดระเบียบการเข้าถึงทรัพยากร","เพิ่มอัตราการสืบพันธุ์ของทุกตัว","ช่วยให้หาอาหารได้ง่ายขึ้น"],ans:1,
+  exp:"Dominance Hierarchy หรือลำดับชั้นในฝูง ช่วยลดการทะเลาะวิวาทที่สิ้นเปลืองพลังงาน สัตว์แต่ละตัวรู้สถานะของตัวเองจึงยอมรับโดยไม่ต้องต่อสู้ทุกครั้ง"},
+];
+
+let current=0, score=0, answered=false, userAnswers=[];
+const labels=['A','B','C','D'];
+
+function render(){
+  const el=document.getElementById('quiz-area');
+  if(current>=questions.length){showResult(el);return;}
+  const q=questions[current];
+  const pct=Math.round((current/questions.length)*100);
+  el.innerHTML=`
+    <div class="score-row">
+      <div class="score-badge">คะแนน: <span>${score}</span></div>
+      <div class="q-num">ข้อ ${current+1} / ${questions.length}</div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+    <div class="card">
+      <span class="category-tag">${q.cat}</span>
+      <p class="question">${q.q}</p>
+    </div>
+    <div class="options" id="opts">
+      ${q.opts.map((o,i)=>`
+        <button class="opt-btn" onclick="choose(${i})" id="opt-${i}">
+          <span class="opt-label">${labels[i]}</span>
+          <span class="opt-text">${o}</span>
+        </button>`).join('')}
+    </div>
+    <div class="feedback" id="fb"></div>
+    <button class="nav-btn" id="nb" style="display:none" onclick="next()">
+      ${current===questions.length-1?'ดูผลลัพธ์ →':'ข้อถัดไป →'}
+    </button>`;
+}
+
+function choose(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[current];
+  const correct=idx===q.ans;
+  if(correct)score++;
+  userAnswers.push({q:q.q,chosen:idx,correct:correct,ans:q.ans,exp:q.exp,opts:q.opts});
+  for(let i=0;i<q.opts.length;i++){
+    const btn=document.getElementById('opt-'+i);
+    btn.disabled=true;
+    if(i===q.ans&&i===idx){btn.classList.add('correct');}
+    else if(i===idx&&!correct){btn.classList.add('wrong');}
+    else if(i===q.ans){btn.classList.add('reveal-correct');}
+  }
+  const fb=document.getElementById('fb');
+  fb.className='feedback show '+(correct?'correct':'wrong');
+  fb.innerHTML=(correct?'✓ ถูกต้อง! ':'✗ ไม่ถูกต้อง ')+'— '+q.exp;
+  document.getElementById('nb').style.display='block';
+}
+
+function next(){
+  answered=false;
+  current++;
+  render();
+}
+
+function showResult(el){
+  const pct=Math.round((score/questions.length)*100);
+  let grade,gcolor;
+  if(pct>=90){grade='ยอดเยี่ยม! 🏆';gcolor='#1aab8a';}
+  else if(pct>=70){grade='ดีมาก! :>';gcolor='#e8a020';}
+  else if(pct>=50){grade='พอใช้ ต้องฝึกเพิ่ม :|';gcolor='#6699cc';}
+  else{grade='ต้องทบทวนเพิ่มเติม :<';gcolor='#e05050';}
+
+  const wrong=userAnswers.filter(a=>!a.correct);
+  const summaryHTML=wrong.length?`<div class="summary-card">
+    <h3>ข้อที่ตอบผิด — ทบทวนด้านล่าง</h3>
+    ${wrong.map(a=>`<div class="sum-item">
+      <div class="sum-icon w">✗</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:3px;font-size:0.84rem">${a.q}</div>
+        <div style="color:#ef9a9a;font-size:0.79rem">คำตอบที่ถูก: ${a.opts[a.ans]}</div>
+        <div style="color:#8b949e;font-size:0.78rem;margin-top:2px">${a.exp}</div>
+      </div>
+    </div>`).join('')}
+  </div>`:'<div class="summary-card" style="text-align:center;padding:1.5rem"><div style="font-size:2rem">🎉</div><div style="color:#4caf50;margin-top:4px">ตอบถูกทุกข้อ!</div></div>';
+
+  el.innerHTML=`<div class="result-screen">
+    <div class="big-score">${score}</div>
+    <div class="score-sub">จาก ${questions.length} ข้อ</div>
+    <div class="grade" style="color:${gcolor}">${grade}</div>
+    <div class="result-grid">
+      <div class="r-card"><div class="num" style="color:#4caf50">${score}</div><div class="lbl">ถูก</div></div>
+      <div class="r-card"><div class="num" style="color:#e53935">${questions.length-score}</div><div class="lbl">ผิด</div></div>
+      <div class="r-card"><div class="num" style="color:#e8a020">${pct}%</div><div class="lbl">คะแนน</div></div>
+    </div>
+    <button class="restart-btn" onclick="restart()">เล่นใหม่อีกครั้ง</button>
+    ${summaryHTML}
+  </div>`;
+}
+
+function restart(){current=0;score=0;answered=false;userAnswers=[];render();}
+render();
+</script>

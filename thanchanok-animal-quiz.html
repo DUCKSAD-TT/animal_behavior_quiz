@@ -1,375 +1,605 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ป่าแห่งพฤติกรรม | เกมทายพฤติกรรมสัตว์</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --forest-deep:#122b21;
-    --forest-mid:#1f5c46;
-    --forest-leaf:#2f7a5c;
-    --moss:#6fbf8b;
-    --moss-soft:#a9dcbb;
-    --mist:#eef7ef;
-    --sun:#e8b94a;
-    --berry:#c0564f;
-    --bark:#3a2c22;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    min-height:100vh;
-    font-family:'Nunito Sans', sans-serif;
-    color:var(--forest-deep);
-    background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(111,191,139,0.35), transparent 60%),
-      radial-gradient(ellipse 800px 600px at 100% 100%, rgba(31,92,70,0.25), transparent 55%),
-      linear-gradient(180deg, #eef7ef 0%, #dcefe1 100%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px 16px;
-    position:relative;
-    overflow-x:hidden;
-  }
-  .leaf-deco{
-    position:fixed;
-    pointer-events:none;
-    opacity:0.5;
-    z-index:0;
-  }
-  .leaf-deco.tl{top:-40px;left:-40px;width:220px;transform:rotate(-15deg);}
-  .leaf-deco.br{bottom:-60px;right:-50px;width:260px;transform:rotate(200deg);}
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260902-06-6f520ec","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script><script src="/_sdk/50d846425a1e5082.telemetry_sdk.js" integrity="sha512-Otbex+ztlVbcEGql0rXGd/3E3ee/hqAntg6DeuUEMG6pIPbXGOSvZbFZVzknAXi1tH/itQ+ijEhOTr2aWj6CXg=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ป่าแห่งพฤติกรรม | เกมทายพฤติกรรมสัตว์</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&amp;family=Nunito+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-deep: #122b21;
+      --forest-mid: #1f5c46;
+      --forest-leaf: #2f7a5c;
+      --moss: #6fbf8b;
+      --moss-soft: #a9dcbb;
+      --mist: #eef7ef;
+      --sun: #e8b94a;
+      --berry: #c0564f;
+    }
 
-  .stage{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:600px;
-  }
+    * { box-sizing: border-box; }
+    html { background: #dcefe1; }
+    body {
+      margin: 0;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      width: 100%;
+      font-family: "Nunito Sans", sans-serif;
+      color: var(--forest-deep);
+      background:
+        radial-gradient(ellipse 900px 500px at 15% -5%, rgba(111, 191, 139, .35), transparent 60%),
+        radial-gradient(ellipse 800px 600px at 100% 100%, rgba(31, 92, 70, .25), transparent 55%),
+        linear-gradient(180deg, #eef7ef 0%, #dcefe1 100%);
+      overflow-x: hidden;
+    }
 
-  .card{
-    background:#ffffff;
-    border-radius:26px;
-    box-shadow:0 30px 60px -25px rgba(18,43,33,0.35), 0 2px 0 rgba(18,43,33,0.04) inset;
-    border:1px solid rgba(31,92,70,0.08);
-    overflow:hidden;
-  }
+    button, input { font: inherit; }
 
-  header.top{
-    background:linear-gradient(135deg, var(--forest-mid), var(--forest-deep));
-    padding:22px 26px 20px;
-    color:var(--mist);
-    position:relative;
-  }
-  header.top h1{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:1.5rem;
-    margin:0 0 2px;
-    letter-spacing:0.2px;
-  }
-  header.top p.tagline{
-    margin:0;
-    font-size:0.85rem;
-    color:var(--moss-soft);
-  }
+    .app-stage {
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .vine-track{
-    margin-top:16px;
-    height:10px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.14);
-    overflow:hidden;
-    position:relative;
-  }
-  .vine-fill{
-    height:100%;
-    background:linear-gradient(90deg, var(--moss), var(--sun));
-    border-radius:999px;
-    transition:width .5s ease;
-  }
-  .progress-label{
-    margin-top:8px;
-    font-size:0.78rem;
-    color:var(--moss-soft);
-    display:flex;
-    justify-content:space-between;
-  }
+    .leaf-deco {
+      position: fixed;
+      pointer-events: none;
+      opacity: .52;
+      z-index: 0;
+    }
 
-  main.body{
-    padding:26px;
-  }
+    .leaf-top { top: -42px; left: -42px; width: 220px; transform: rotate(-16deg); }
+    .leaf-bottom { bottom: -60px; right: -50px; width: 260px; transform: rotate(200deg); }
 
-  .q-count{
-    font-size:0.78rem;
-    font-weight:800;
-    color:var(--forest-leaf);
-    letter-spacing:0.3px;
-    margin-bottom:10px;
-  }
-  .question{
-    font-family:'Fraunces', serif;
-    font-size:1.28rem;
-    line-height:1.5;
-    font-weight:600;
-    color:var(--forest-deep);
-    margin:0 0 20px;
-  }
+    .quiz-stage {
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+      animation: rise-in .6s ease both;
+    }
 
-  .choices{
-    display:flex;
-    flex-direction:column;
-    gap:11px;
-  }
-  .choice{
-    text-align:left;
-    padding:14px 16px;
-    border-radius:14px;
-    border:1.5px solid #d7e9dc;
-    background:#f7fbf8;
-    font-family:'Nunito Sans', sans-serif;
-    font-size:0.98rem;
-    color:var(--forest-deep);
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    transition:border-color .15s ease, background .15s ease, transform .1s ease;
-  }
-  .choice .tag{
-    flex:0 0 auto;
-    width:26px;height:26px;
-    border-radius:50%;
-    background:#dff0e3;
-    color:var(--forest-mid);
-    font-weight:800;
-    font-size:0.8rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .choice:hover:not(:disabled){
-    border-color:var(--moss);
-    background:#eef8f0;
-    transform:translateY(-1px);
-  }
-  .choice:disabled{cursor:default;}
-  .choice.correct{
-    border-color:var(--forest-leaf);
-    background:#e2f3e6;
-  }
-  .choice.correct .tag{background:var(--forest-leaf);color:#fff;}
-  .choice.wrong{
-    border-color:var(--berry);
-    background:#fbeae9;
-  }
-  .choice.wrong .tag{background:var(--berry);color:#fff;}
+    .quiz-card {
+      background: #fff;
+      border: 1px solid rgba(31, 92, 70, .08);
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px -25px rgba(18, 43, 33, .35), 0 2px 0 rgba(18, 43, 33, .04) inset;
+    }
 
-  .feedback{
-    margin-top:16px;
-    padding:14px 16px;
-    border-radius:14px;
-    font-size:0.9rem;
-    line-height:1.55;
-    display:none;
-  }
-  .feedback.show{display:block;}
-  .feedback.right{background:#e2f3e6;color:var(--forest-deep);border-left:4px solid var(--forest-leaf);}
-  .feedback.miss{background:#fbeae9;color:var(--forest-deep);border-left:4px solid var(--berry);}
-  .feedback b{color:var(--forest-mid);}
+    .forest-header {
+      background: linear-gradient(135deg, #1f5c46, #122b21);
+      padding: 22px 26px 20px;
+      color: var(--mist);
+    }
 
-  .next-btn{
-    margin-top:18px;
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:14px;
-    background:var(--forest-deep);
-    color:#fff;
-    font-family:'Nunito Sans', sans-serif;
-    font-weight:800;
-    font-size:0.98rem;
-    cursor:pointer;
-    display:none;
-    transition:background .15s ease;
-  }
-  .next-btn:hover{background:var(--forest-mid);}
-  .next-btn.show{display:block;}
+    .game-title {
+      font-family: Fraunces, serif;
+      margin: 0 0 2px;
+      line-height: 1.2;
+    }
 
-  /* Start & End screens */
-  .panel{
-    padding:38px 30px 34px;
-    text-align:center;
-  }
-  .badge-icon{
-    width:76px;height:76px;
-    margin:0 auto 18px;
-    border-radius:50%;
-    background:linear-gradient(135deg, var(--moss), var(--forest-leaf));
-    display:flex;align-items:center;justify-content:center;
-    font-size:2rem;
-    box-shadow:0 12px 24px -8px rgba(47,122,92,0.5);
-  }
-  .panel h2{
-    font-family:'Fraunces', serif;
-    font-size:1.6rem;
-    margin:0 0 10px;
-    color:var(--forest-deep);
-  }
-  .panel p{
-    color:#4c6559;
-    font-size:0.95rem;
-    line-height:1.6;
-    max-width:420px;
-    margin:0 auto 26px;
-  }
-  .start-btn, .retry-btn{
-    padding:14px 34px;
-    border:none;
-    border-radius:999px;
-    background:var(--forest-deep);
-    color:#fff;
-    font-weight:800;
-    font-size:1rem;
-    cursor:pointer;
-    transition:transform .15s ease, background .15s ease;
-  }
-  .start-btn:hover, .retry-btn:hover{background:var(--forest-mid);transform:translateY(-2px);}
+    .tagline {
+      margin: 0;
+      color: var(--moss-soft);
+    }
 
-  .score-big{
-    font-family:'Fraunces', serif;
-    font-size:3.2rem;
-    font-weight:700;
-    color:var(--forest-mid);
-    margin:6px 0 2px;
-  }
-  .score-sub{
-    font-size:0.9rem;
-    color:#5c7a6c;
-    margin-bottom:24px;
-  }
-  .rank-chip{
-    display:inline-block;
-    padding:6px 16px;
-    border-radius:999px;
-    background:#dff0e3;
-    color:var(--forest-mid);
-    font-weight:800;
-    font-size:0.82rem;
-    margin-bottom:22px;
-  }
+    .vine-track {
+      height: 10px;
+      border-radius: 999px;
+      margin-top: 16px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .14);
+    }
 
-  .hidden{display:none !important;}
+    .vine-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--moss), var(--sun));
+      transition: width .45s ease;
+    }
 
-  @media (max-width:420px){
-    .panel{padding:30px 20px;}
-    header.top{padding:18px 20px;}
-    main.body{padding:20px;}
-    .question{font-size:1.12rem;}
-  }
-</style>
-</head>
-<body>
+    .progress-row {
+      margin-top: 8px;
+      color: var(--moss-soft);
+      font-size: .78rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
 
-<svg class="leaf-deco tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M10 190C10 100 60 20 190 10C180 130 110 190 10 190Z" fill="#6fbf8b" opacity="0.35"/>
-</svg>
-<svg class="leaf-deco br" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M10 190C10 100 60 20 190 10C180 130 110 190 10 190Z" fill="#1f5c46" opacity="0.3"/>
-</svg>
+    .quiz-body { padding: 26px; }
 
-<div class="stage">
-  <div class="card">
+    .topic-label {
+      color: var(--forest-leaf);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .3px;
+      margin: 0 0 10px;
+    }
 
-    <!-- START SCREEN -->
-    <div id="startScreen" class="panel">
-      <div class="badge-icon">🌿</div>
-      <h2>ป่าแห่งพฤติกรรม</h2>
-      <p>ทดสอบความเข้าใจเรื่อง "พฤติกรรมของสัตว์" 15 ข้อ ครอบคลุมพฤติกรรมแต่กำเนิด พฤติกรรมจากการเรียนรู้ และพฤติกรรมทางสังคม พร้อมคำอธิบายท้ายทุกข้อ</p>
-      <button class="start-btn" onclick="startQuiz()">เริ่มผจญป่า</button>
-    </div>
+    .question-text {
+      min-height: 88px;
+      font-family: Fraunces, serif;
+      font-size: 1.28rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin: 0 0 20px;
+    }
 
-    <!-- QUIZ SCREEN -->
-    <div id="quizScreen" class="hidden">
-      <header class="top">
-        <h1>ป่าแห่งพฤติกรรม</h1>
-        <p class="tagline">เกมทายพฤติกรรมสัตว์</p>
-        <div class="vine-track"><div class="vine-fill" id="vineFill" style="width:0%"></div></div>
-        <div class="progress-label">
-          <span id="progressText">ข้อ 1 / 15</span>
-          <span id="scoreText">คะแนน 0</span>
-        </div>
+    .choice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .choice {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1.5px solid #d7e9dc;
+      border-radius: 14px;
+      background: #f7fbf8;
+      color: var(--forest-deep);
+      cursor: pointer;
+      padding: 14px 16px;
+      text-align: left;
+      transition: border-color .15s ease, background .15s ease, transform .1s ease;
+    }
+
+    .choice:hover:not(:disabled) {
+      border-color: var(--moss);
+      background: #eef8f0;
+      transform: translateY(-1px);
+    }
+
+    .choice:focus-visible,
+    .forest-button:focus-visible {
+      outline: 3px solid rgba(232, 185, 74, .9);
+      outline-offset: 3px;
+    }
+
+    .choice:disabled { cursor: default; }
+
+    .choice-tag {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #dff0e3;
+      color: var(--forest-mid);
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .choice.correct {
+      background: #e2f3e6;
+      border-color: var(--forest-leaf);
+    }
+
+    .choice.correct .choice-tag {
+      color: #fff;
+      background: var(--forest-leaf);
+    }
+
+    .choice.wrong {
+      background: #fbeae9;
+      border-color: var(--berry);
+    }
+
+    .choice.wrong .choice-tag {
+      color: #fff;
+      background: var(--berry);
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: var(--forest-deep);
+      font-size: .9rem;
+      line-height: 1.55;
+    }
+
+    .feedback.show { display: block; animation: fade-in .25s ease both; }
+    .feedback.right { background: #e2f3e6; border-left: 4px solid var(--forest-leaf); }
+    .feedback.miss { background: #fbeae9; border-left: 4px solid var(--berry); }
+
+    .forest-button {
+      border: 0;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform .15s ease, background .15s ease, opacity .15s ease;
+    }
+
+    .forest-button:hover { transform: translateY(-2px); }
+    .forest-button:active { transform: translateY(0); }
+
+    .next-button {
+      display: none;
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      color: #fff;
+      background: #122b21;
+    }
+
+    .next-button:hover { background: #1f5c46; }
+    .next-button.show { display: block; animation: fade-in .22s ease both; }
+
+    .panel {
+      padding: 38px 30px 34px;
+      text-align: center;
+    }
+
+    .badge-icon {
+      width: 76px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6fbf8b, #2f7a5c);
+      color: #fff;
+      box-shadow: 0 12px 24px -8px rgba(47, 122, 92, .5);
+    }
+
+    .badge-icon svg { width: 34px; height: 34px; }
+
+    .panel-title {
+      font-family: Fraunces, serif;
+      color: var(--forest-deep);
+      margin: 0 0 10px;
+      line-height: 1.25;
+    }
+
+    .panel-copy {
+      max-width: 430px;
+      margin: 0 auto 26px;
+      color: #4c6559;
+      line-height: 1.65;
+    }
+
+    .pill-button {
+      padding: 14px 34px;
+      color: #fff;
+      background: #122b21;
+      border-radius: 999px;
+    }
+
+    .pill-button:hover { background: #1f5c46; }
+
+    .score-big {
+      margin: 6px 0 2px;
+      font-family: Fraunces, serif;
+      color: var(--forest-mid);
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .score-sub {
+      margin: 0 0 20px;
+      color: #5c7a6c;
+      font-size: .9rem;
+    }
+
+    .rank-chip {
+      display: inline-block;
+      margin-bottom: 22px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: #dff0e3;
+      color: var(--forest-mid);
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .hidden { display: none !important; }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 420px) {
+      .app-stage { padding: 18px 12px; }
+      .panel { padding: 30px 20px; }
+      .forest-header, .quiz-body { padding: 20px; }
+      .question-text { font-size: 1.12rem; min-height: 84px; }
+    }
+  </style>
+  <script src="/_sdk/b3bf9e8ac58e6ad6.data_sdk.js" type="text/javascript" integrity="sha512-otc1u9NYq9Ms5Jt//7vmhrrqR5CLPr8Jdgs6741gqniClfLMcfmC+jK/cKuQdhLv6G0esJ/FzaMS9tv0T/vj/Q=="></script>
+  <script src="/_sdk/85d8138ba0e9799c.resizing_sdk.js" type="text/javascript" integrity="sha512-8dt8XK3OsxyrL/A/AlNWHjY+utLvSBcXg410ejaLzAIOVGDj1jNmEYRbymhdzToKhNo0uO9dxAmMLwHQseh3Lw=="></script>
+ </head>
+ <body data-template-id="__page-root">
+  <svg class="leaf-deco leaf-top" viewbox="0 0 200 200" fill="none" aria-hidden="true"><path d="M10 190C10 100 60 20 190 10C180 130 110 190 10 190Z" fill="#6fbf8b" opacity=".35" />
+  </svg>
+  <svg class="leaf-deco leaf-bottom" viewbox="0 0 200 200" fill="none" aria-hidden="true"><path d="M10 190C10 100 60 20 190 10C180 130 110 190 10 190Z" fill="#1f5c46" opacity=".3" />
+  </svg>
+  <div class="app-stage">
+   <div class="quiz-stage">
+    <div class="quiz-card">
+     <section id="start-screen" class="panel" aria-labelledby="start-title">
+      <div class="badge-icon" aria-hidden="true">
+       <i data-lucide="sprout"></i>
+      </div>
+      <h1 id="start-title" data-template-id="start-title" class="canva-text panel-title"></h1>
+      <p data-template-id="start-copy" class="canva-text panel-copy"></p><button id="start-button" data-template-id="start-button" class="canva-button forest-button pill-button" type="button"></button>
+     </section>
+     <section id="quiz-screen" class="hidden" aria-live="polite" aria-labelledby="quiz-heading">
+      <header data-template-id="quiz-header" class="canva-header forest-header">
+       <h2 id="quiz-heading" data-template-id="quiz-title" class="canva-text game-title"></h2>
+       <p data-template-id="quiz-tagline" class="canva-text tagline"></p>
+       <div class="vine-track" aria-label="ความคืบหน้าของเกม">
+        <div id="vine-fill" class="vine-fill"></div>
+       </div>
+       <div class="progress-row"><span id="progress-text">ข้อ 1 / 15</span> <span id="score-text">คะแนน 0</span>
+       </div>
       </header>
-      <main class="body">
-        <div class="q-count" id="topicLabel">หัวข้อ</div>
-        <p class="question" id="questionText">คำถาม</p>
-        <div class="choices" id="choicesBox"></div>
-        <div class="feedback" id="feedbackBox"></div>
-        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">ข้อถัดไป →</button>
+      <main class="quiz-body">
+       <p id="topic-label" class="topic-label"></p>
+       <h3 id="question-text" class="question-text"></h3>
+       <div id="choices-box" class="choice-list" role="group" aria-label="ตัวเลือกคำตอบ"></div>
+       <div id="feedback-box" class="feedback" role="status"></div><button id="next-button" data-template-id="next-button" class="canva-button forest-button next-button" type="button"></button>
       </main>
+     </section>
+     <section id="end-screen" class="panel hidden" aria-labelledby="end-title">
+      <div class="badge-icon" aria-hidden="true">
+       <i data-lucide="leaf"></i>
+      </div>
+      <h2 id="end-title" data-template-id="end-title" class="canva-text panel-title"></h2>
+      <p id="final-score" class="score-big" aria-label="คะแนนสุดท้าย"></p>
+      <p data-template-id="score-caption" class="canva-text score-sub"></p>
+      <div id="rank-chip" class="rank-chip"></div><br><button id="retry-button" data-template-id="retry-button" class="canva-button forest-button pill-button" type="button"></button>
+     </section>
     </div>
-
-    <!-- END SCREEN -->
-    <div id="endScreen" class="panel hidden">
-      <div class="badge-icon">🍃</div>
-      <h2>สรุปผลการผจญป่า</h2>
-      <div class="score-big" id="finalScore">0/15</div>
-      <div class="score-sub">คำตอบที่ถูกต้อง</div>
-      <div class="rank-chip" id="rankChip">นักสำรวจป่า</div>
-      <br>
-      <button class="retry-btn" onclick="restartQuiz()">ลองอีกครั้ง</button>
-    </div>
-
+   </div>
   </div>
-</div>
+  <script src="/_sdk/0b5911494a4ff060.editing_sdk.js" integrity="sha512-/vyQ+jNH4Q/uooDsnMcX6o3IxIcmA7RW0TJmBR88seymBCMyLn9QjvQ8qpBP5hx5JmcAoEFUTuGK9amUMyPFpA=="></script>
+  <script>
+    const questions = [
+      {
+        topic: "พฤติกรรมแต่กำเนิด",
+        q: "การที่แมลงบินเข้าหาแสงไฟในเวลากลางคืน เป็นพฤติกรรมประเภทใด",
+        choices: ["รีเฟล็กซ์ (Reflex)", "แทกซิส (Taxis)", "คิเนซิส (Kinesis)", "การเรียนรู้แบบลองผิดลองถูก"],
+        answer: 1,
+        explain: "แทกซิส คือการเคลื่อนที่เข้าหาหรือหนีสิ่งเร้าอย่างมีทิศทางแน่นอน เช่น ผีเสื้อกลางคืนบินเข้าหาแสงไฟ เรียกว่า phototaxis"
+      },
+      {
+        topic: "พฤติกรรมแต่กำเนิด",
+        q: "มดปลวกที่เคลื่อนที่เร็วขึ้นเมื่ออยู่ในที่แห้งแล้งเพื่อหาความชื้น โดยไม่มีทิศทางตายตัว จัดเป็นพฤติกรรมแบบใด",
+        choices: ["Taxis", "Kinesis", "Imprinting", "Fixed Action Pattern"],
+        answer: 1,
+        explain: "Kinesis คือการเปลี่ยนอัตราเร็วของการเคลื่อนที่เพื่อตอบสนองต่อสิ่งเร้า แต่ไม่มีทิศทางที่แน่นอนเหมือน Taxis"
+      },
+      {
+        topic: "พฤติกรรมแต่กำเนิด",
+        q: "เมื่อแตะขาของนกกระเรียนขณะฟักไข่แล้วนกยกขาหนีทันที เป็นตัวอย่างของพฤติกรรมชนิดใด",
+        choices: ["รีเฟล็กซ์ (Reflex)", "Imprinting", "Insight Learning", "Habituation"],
+        answer: 0,
+        explain: "รีเฟล็กซ์เป็นการตอบสนองอย่างรวดเร็วและอัตโนมัติต่อสิ่งเร้า โดยไม่ต้องอาศัยการเรียนรู้มาก่อน"
+      },
+      {
+        topic: "พฤติกรรมแต่กำเนิด",
+        q: "แม่นกบางชนิดกลิ้งไข่ที่หล่นออกจากรังกลับเข้ารังด้วยลำดับขั้นตอนเดิมทุกครั้ง แม้ไข่จะหายไประหว่างทางก็ยังทำต่อจนจบ พฤติกรรมนี้เรียกว่าอะไร",
+        choices: ["Fixed Action Pattern", "Operant Conditioning", "Trial and Error", "Imitation"],
+        answer: 0,
+        explain: "Fixed Action Pattern คือพฤติกรรมแต่กำเนิดที่เมื่อเริ่มแล้วจะดำเนินตามลำดับขั้นตอนค่อนข้างตายตัวจนจบ"
+      },
+      {
+        topic: "พฤติกรรมจากการเรียนรู้",
+        q: "ลูกห่านที่เดินตามสิ่งเคลื่อนไหวชิ้นแรกที่เห็นหลังฟักออกจากไข่ แม้เป็นมนุษย์แทนแม่ห่าน เรียกพฤติกรรมนี้ว่าอะไร",
+        choices: ["Classical Conditioning", "Operant Learning", "Imprinting", "Communication"],
+        answer: 2,
+        explain: "Imprinting หรือการฝังใจ เกิดขึ้นในช่วงเวลาวิกฤตหลังฟักไข่ ลูกสัตว์จะจดจำและติดตามสิ่งแรกที่พบเห็น"
+      },
+      {
+        topic: "พฤติกรรมจากการเรียนรู้",
+        q: "หอยทากหดตัวเมื่อถูกสัมผัสครั้งแรก แต่เมื่อถูกสัมผัสซ้ำ ๆ โดยไม่เป็นอันตรายกลับค่อย ๆ ไม่หดตัวอีก พฤติกรรมนี้เรียกว่าอะไร",
+        choices: ["Habituation", "Imprinting", "Taxis", "Reflex"],
+        answer: 0,
+        explain: "Habituation คือการที่สัตว์ลดการตอบสนองต่อสิ่งเร้าที่เกิดซ้ำและไม่มีอันตราย"
+      },
+      {
+        topic: "พฤติกรรมจากการเรียนรู้",
+        q: "สุนัขน้ำลายไหลเมื่อได้ยินเสียงกระดิ่ง หลังจากเคยได้ยินเสียงนี้คู่กับการได้รับอาหารหลายครั้ง เป็นการเรียนรู้แบบใด",
+        choices: ["Classical Conditioning", "Insight Learning", "Kinesis", "Fixed Action Pattern"],
+        answer: 0,
+        explain: "Classical Conditioning ของพาฟลอฟ คือการเชื่อมโยงสิ่งเร้าที่เดิมเป็นกลาง เช่น เสียงกระดิ่ง เข้ากับสิ่งเร้าที่มีความหมาย เช่น อาหาร"
+      },
+      {
+        topic: "พฤติกรรมจากการเรียนรู้",
+        q: "หนูในกล่องทดลองกดคันโยกแล้วได้รับอาหาร จึงกดคันโยกบ่อยขึ้น เป็นการเรียนรู้แบบใด",
+        choices: ["Operant Conditioning", "Imprinting", "Reflex", "Taxis"],
+        answer: 0,
+        explain: "Operant Conditioning คือการเรียนรู้จากผลของการกระทำ เมื่อพฤติกรรมนำไปสู่รางวัล สัตว์จะมีแนวโน้มทำพฤติกรรมนั้นซ้ำ"
+      },
+      {
+        topic: "พฤติกรรมจากการเรียนรู้",
+        q: "ชิมแปนซีใช้ไม้เขี่ยปลวกออกจากรังหลังจากลองใช้กิ่งไม้หลายแบบจนสำเร็จ เป็นตัวอย่างของอะไร",
+        choices: ["การลองผิดลองถูก", "รีเฟล็กซ์", "แทกซิส", "คิเนซิส"],
+        answer: 0,
+        explain: "การลองผิดลองถูกเป็นการเรียนรู้จากการทดลองหลายวิธี แล้วจดจำวิธีที่ให้ผลสำเร็จ"
+      },
+      {
+        topic: "พฤติกรรมจากการเรียนรู้",
+        q: "ลิงเห็นกล้วยอยู่ไกลเกินเอื้อม จึงนำกล่องมาซ้อนและปีนขึ้นไปหยิบกล้วยได้ทันที พฤติกรรมนี้เรียกว่าอะไร",
+        choices: ["Insight Learning", "Habituation", "Imprinting", "Reflex"],
+        answer: 0,
+        explain: "Insight Learning คือการแก้ปัญหาแบบหยั่งรู้ สัตว์มองเห็นความสัมพันธ์ของสิ่งต่าง ๆ และหาทางออกได้อย่างฉับพลัน"
+      },
+      {
+        topic: "พฤติกรรมทางสังคม",
+        q: "ผึ้งงานเต้นเป็นรูปเลขแปดเพื่อบอกตำแหน่งแหล่งอาหารแก่ผึ้งตัวอื่น เป็นพฤติกรรมใด",
+        choices: ["การสื่อสาร", "การอพยพ", "การฝังใจ", "การเคลื่อนที่แบบแทกซิส"],
+        answer: 0,
+        explain: "การเต้นของผึ้งเป็นการสื่อสารเพื่อบอกทิศทางและระยะทางของแหล่งอาหารแก่สมาชิกในรัง"
+      },
+      {
+        topic: "พฤติกรรมทางสังคม",
+        q: "นกบางชนิดส่งเสียงร้องเตือนเมื่อพบผู้ล่า ทำให้สมาชิกตัวอื่นหลบซ่อน เป็นประโยชน์ของพฤติกรรมทางสังคมข้อใด",
+        choices: ["เพิ่มโอกาสรอดของกลุ่ม", "ลดการเรียนรู้", "หยุดการสื่อสาร", "ทำให้เกิดรีเฟล็กซ์"],
+        answer: 0,
+        explain: "การเตือนภัยช่วยให้สมาชิกในกลุ่มหลบหนีได้เร็วขึ้น จึงเพิ่มโอกาสรอดชีวิตของทั้งกลุ่ม"
+      },
+      {
+        topic: "พฤติกรรมทางสังคม",
+        q: "หมาป่าอยู่รวมกันเป็นฝูงและมีลำดับชั้นในการนำฝูง ลักษณะนี้เรียกว่าอะไร",
+        choices: ["ลำดับชั้นทางสังคม", "คิเนซิส", "การลองผิดลองถูก", "การฝังใจ"],
+        answer: 0,
+        explain: "สัตว์สังคมหลายชนิดมีลำดับชั้นทางสังคม ซึ่งช่วยจัดระเบียบการเข้าถึงอาหาร พื้นที่ และการตัดสินใจของกลุ่ม"
+      },
+      {
+        topic: "พฤติกรรมการอยู่รอด",
+        q: "นกนางแอ่นบินจากพื้นที่หนาวไปยังพื้นที่อุ่นในช่วงฤดูหนาวเป็นประจำทุกปี เรียกพฤติกรรมนี้ว่าอะไร",
+        choices: ["การอพยพ", "การจำศีล", "Habituation", "Operant Conditioning"],
+        answer: 0,
+        explain: "การอพยพเป็นการเคลื่อนย้ายตามฤดูกาลไปยังแหล่งที่มีอาหารหรือสภาพแวดล้อมเหมาะสมกว่า"
+      },
+      {
+        topic: "พฤติกรรมการอยู่รอด",
+        q: "กิ้งก่าเปลี่ยนสีผิวให้กลมกลืนกับสภาพแวดล้อมเพื่อลดโอกาสถูกผู้ล่าพบ เป็นการปรับตัวแบบใด",
+        choices: ["การพรางตัว", "การฝังใจ", "การสื่อสาร", "การลองผิดลองถูก"],
+        answer: 0,
+        explain: "การพรางตัวช่วยให้สัตว์กลมกลืนกับสภาพแวดล้อม จึงช่วยหลบผู้ล่าหรือเข้าใกล้เหยื่อได้ดีขึ้น"
+      }
+    ];
 
-<script>
-const questions = [
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "การที่แมลงบินเข้าหาแสงไฟในเวลากลางคืน เป็นพฤติกรรมประเภทใด",
-    choices: ["รีเฟล็กซ์ (Reflex)", "แทกซิส (Taxis)", "คิเนซิส (Kinesis)", "การเรียนรู้แบบลองผิดลองถูก"],
-    answer: 1,
-    explain: "แทกซิส (Taxis) คือการเคลื่อนที่เข้าหาหรือหนีสิ่งเร้าอย่างมีทิศทางแน่นอน เช่น ผีเสื้อกลางคืนบินเข้าหาแสงไฟ เรียกว่า phototaxis"
-  },
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "มดปลวกที่เคลื่อนที่เร็วขึ้นเมื่ออยู่ในที่แห้งแล้งเพื่อหาความชื้น โดยไม่มีทิศทางตายตัว จัดเป็นพฤติกรรมแบบใด",
-    choices: ["Taxis", "Kinesis", "Imprinting", "Fixed Action Pattern"],
-    answer: 1,
-    explain: "Kinesis คือการเปลี่ยนอัตราเร็วของการเคลื่อนที่ตอบสนองต่อสิ่งเร้า แต่ไม่มีทิศทางที่แน่นอนเหมือน Taxis"
-  },
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "เมื่อแตะขาของนกกระเรียนขณะฟักไข่แล้วนกยกขาหนีทันที เป็นตัวอย่างของพฤติกรรมชนิดใด",
-    choices: ["รีเฟล็กซ์ (Reflex)", "Imprinting", "Insight Learning", "Habituation"],
-    answer: 0,
-    explain: "รีเฟล็กซ์เป็นการตอบสนองอย่างรวดเร็วและอัตโนมัติต่อสิ่งเร้า ควบคุมผ่านไขสันหลังโดยไม่ผ่านการคิดของสมองส่วนบน"
-  },
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "แม่นกบางชนิดจะกกไข่ที่หล่นออกจากรังโดยกลิ้งกลับเข้ารังด้วยลำดับขั้นตอนที่ตายตัวทุกครั้ง แม้ไข่จะหลุดมืออีกระหว่างทางก็ยังทำจนจบขั้นตอน พฤติกรรมนี้เรียกว่าอะไร",
-    choices: ["Fixed Action Pattern (FAP)", "Operant Conditioning", "Trial and Error", "Imitation"],
-    answer: 0,
-    explain: "Fixed Action Pattern คือพฤติกรรมแต่กำเนิดที่เมื่อเริ่มแล้วจะดำเนินไปตามลำดับขั้นตอนตายตัวจนจบ แม้สิ่งเร้าจะหายไประหว่างทาง"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "ลูกห่านที่ฟักออกจากไข่แล้วเดินตามสิ่งเคลื่อนไหวชิ้นแรกที่เห็น แม้จะเป็นมนุษย์แทนแม่ห่าน เป็นการค้นพบของนักวิทยาศาสตร์ท่านใด และเรียกพฤติกรรมนี้ว่าอะไร",
-    choices: ["พาฟลอฟ - Conditioning", "สกินเนอร์ - Operant Learning", "ลอเรนซ์ - Imprinting", "ฟอน ฟริช - Communication"],
-    answer: 2,
-    explain: "คอนราด ลอเรนซ์ (Konrad Lorenz) ศึกษาพฤติกรรม Imprinting หรือการฝังใจในลูกห่าน ซึ่งเกิดขึ้นในช่วงเวลาวิกฤต (critical period) หลังฟักไข่"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "หอยทากที่หดตัวเมื่อถูกสัมผัสครั้งแรก แต่เมื่อถูกสัมผัสซ้ำๆ โดยไม่เป็นอันตราย จะค่อยๆ ไม่หดตัวอีก พฤติกรรมนี้เรียกว่าอะไร",
-    choices ? undefined : undefined,
-  ],
-};
-</script>
-</body>
+    const letters = ["ก", "ข", "ค", "ง"];
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    const startScreen = document.getElementById("start-screen");
+    const quizScreen = document.getElementById("quiz-screen");
+    const endScreen = document.getElementById("end-screen");
+    const topicLabel = document.getElementById("topic-label");
+    const questionText = document.getElementById("question-text");
+    const choicesBox = document.getElementById("choices-box");
+    const feedbackBox = document.getElementById("feedback-box");
+    const nextButton = document.getElementById("next-button");
+    const vineFill = document.getElementById("vine-fill");
+    const progressText = document.getElementById("progress-text");
+    const scoreText = document.getElementById("score-text");
+    const finalScore = document.getElementById("final-score");
+    const rankChip = document.getElementById("rank-chip");
+
+    function startQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      answered = false;
+      startScreen.classList.add("hidden");
+      endScreen.classList.add("hidden");
+      quizScreen.classList.remove("hidden");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const item = questions[currentQuestion];
+      answered = false;
+
+      topicLabel.textContent = item.topic;
+      questionText.textContent = item.q;
+      progressText.textContent = `ข้อ ${currentQuestion + 1} / ${questions.length}`;
+      scoreText.textContent = `คะแนน ${score}`;
+      vineFill.style.width = `${(currentQuestion / questions.length) * 100}%`;
+
+      feedbackBox.className = "feedback";
+      feedbackBox.textContent = "";
+      nextButton.classList.remove("show");
+      choicesBox.replaceChildren();
+
+      item.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "choice";
+        button.innerHTML = `<span class="choice-tag">${letters[index]}</span><span>${choice}</span>`;
+        button.addEventListener("click", () => chooseAnswer(index));
+        choicesBox.appendChild(button);
+      });
+    }
+
+    function chooseAnswer(selectedIndex) {
+      if (answered) return;
+      answered = true;
+
+      const item = questions[currentQuestion];
+      const choices = Array.from(choicesBox.querySelectorAll(".choice"));
+      const correct = selectedIndex === item.answer;
+
+      choices.forEach((button, index) => {
+        button.disabled = true;
+        if (index === item.answer) button.classList.add("correct");
+        if (index === selectedIndex && !correct) button.classList.add("wrong");
+      });
+
+      if (correct) {
+        score += 1;
+        feedbackBox.className = "feedback show right";
+        feedbackBox.innerHTML = `<strong>ถูกต้อง! </strong>${item.explain}`;
+      } else {
+        feedbackBox.className = "feedback show miss";
+        feedbackBox.innerHTML = `<strong>ยังไม่ถูกนะ </strong>${item.explain}`;
+      }
+
+      scoreText.textContent = `คะแนน ${score}`;
+      nextButton.classList.add("show");
+      nextButton.focus();
+    }
+
+    function nextQuestion() {
+      if (!answered) return;
+
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion += 1;
+        renderQuestion();
+        return;
+      }
+
+      showResults();
+    }
+
+    function showResults() {
+      quizScreen.classList.add("hidden");
+      endScreen.classList.remove("hidden");
+      vineFill.style.width = "100%";
+      finalScore.textContent = `${score}/${questions.length}`;
+
+      let rank = "นักสำรวจป่า";
+      if (score === questions.length) rank = "ผู้พิทักษ์ผืนป่า";
+      else if (score >= 12) rank = "นักธรรมชาติวิทยา";
+      else if (score >= 8) rank = "ผู้สังเกตการณ์ป่า";
+      else if (score >= 4) rank = "นักเดินป่ามือใหม่";
+
+      rankChip.textContent = rank;
+    }
+
+    document.getElementById("start-button").addEventListener("click", startQuiz);
+    document.getElementById("next-button").addEventListener("click", nextQuestion);
+    document.getElementById("retry-button").addEventListener("click", startQuiz);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+  </script>
+ </body>
 </html>

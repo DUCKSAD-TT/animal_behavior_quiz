@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ป่าแห่งพฤติกรรม | เกมทายพฤติกรรมสัตว์</title>
+<title>เกมพฤติกรรมสัตว์</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -16,550 +16,180 @@
     --mist:#eef7ef;
     --sun:#e8b94a;
     --berry:#c0564f;
-    --bark:#3a2c22;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    min-height:100vh;
-    font-family:'Nunito Sans', sans-serif;
-    color:var(--forest-deep);
+    min-height:100vh;font-family:'Nunito Sans', sans-serif;color:var(--forest-deep);
     background:
       radial-gradient(ellipse 900px 500px at 15% -5%, rgba(111,191,139,0.35), transparent 60%),
       radial-gradient(ellipse 800px 600px at 100% 100%, rgba(31,92,70,0.25), transparent 55%),
       linear-gradient(180deg, #eef7ef 0%, #dcefe1 100%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px 16px;
-    position:relative;
-    overflow-x:hidden;
+    display:flex;align-items:center;justify-content:center;padding:28px 16px;
+    position:relative;overflow-x:hidden;
   }
-  .leaf-deco{
-    position:fixed;
-    pointer-events:none;
-    opacity:0.5;
-    z-index:0;
-  }
+  .leaf-deco{position:fixed;pointer-events:none;opacity:0.5;z-index:0;}
   .leaf-deco.tl{top:-40px;left:-40px;width:220px;transform:rotate(-15deg);}
   .leaf-deco.br{bottom:-60px;right:-50px;width:260px;transform:rotate(200deg);}
 
-  .stage{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:600px;
-  }
-
+  .stage{position:relative;z-index:1;width:100%;max-width:600px;}
   .card{
-    background:#ffffff;
-    border-radius:26px;
+    background:#ffffff;border-radius:26px;
     box-shadow:0 30px 60px -25px rgba(18,43,33,0.35), 0 2px 0 rgba(18,43,33,0.04) inset;
-    border:1px solid rgba(31,92,70,0.08);
-    overflow:hidden;
+    border:1px solid rgba(31,92,70,0.08);overflow:hidden;position:relative;
   }
 
   header.top{
     background:linear-gradient(135deg, var(--forest-mid), var(--forest-deep));
-    padding:22px 26px 20px;
-    color:var(--mist);
-    position:relative;
+    padding:16px 20px 14px;color:var(--mist);
   }
-  header.top h1{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:1.5rem;
-    margin:0 0 2px;
-    letter-spacing:0.2px;
+  .top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+  header.top h1{font-family:'Fraunces', serif;font-weight:600;font-size:1.2rem;margin:0;letter-spacing:0.2px;}
+  .help-btn{
+    background:rgba(255,255,255,0.15);border:none;color:var(--mist);border-radius:999px;
+    padding:5px 12px;font-size:0.78rem;font-weight:800;cursor:pointer;
   }
-  header.top p.tagline{
-    margin:0;
-    font-size:0.85rem;
-    color:var(--moss-soft);
+  .score-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:6px;font-size:0.78rem;color:var(--moss-soft);font-weight:700;
+  }
+  .hearts{letter-spacing:2px;font-size:0.9rem;}
+
+  /* ===== 3D VIEWPORT ===== */
+  #canvasWrap{
+    position:relative;width:100%;height:360px;overflow:hidden;
+    background:linear-gradient(180deg,#bfe3d6 0%,#dff0e3 55%,#eef7ef 100%);
+  }
+  #gameCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  #badgeLayer{position:absolute;inset:0;pointer-events:none;}
+  .loading-3d{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:8px;color:var(--forest-mid);font-weight:800;font-size:0.85rem;
+    background:linear-gradient(180deg,#bfe3d6 0%,#dff0e3 55%,#eef7ef 100%);
+  }
+  .loading-3d .spin{width:26px;height:26px;border:3px solid #cfe9d6;border-top-color:var(--forest-leaf);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .node-btn{
+    position:absolute;width:28px;height:28px;margin-left:-14px;margin-top:-14px;
+    border-radius:50%;border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:0.72rem;font-family:'Nunito Sans',sans-serif;
+    box-shadow:0 3px 6px rgba(18,43,33,0.25);transition:opacity .15s ease;
+  }
+  .node-btn.locked{background:#c3d3c9;color:#5c7a6c;}
+  .node-btn.current{background:var(--sun);color:#5c4413;animation:pulseGlow 1.4s ease-in-out infinite;}
+  .node-btn.done-correct{background:var(--forest-leaf);color:#fff;}
+  .node-btn.done-wrong{background:var(--berry);color:#fff;}
+  @keyframes pulseGlow{
+    0%,100%{box-shadow:0 0 0 0 rgba(232,185,74,0.65);}
+    50%{box-shadow:0 0 0 9px rgba(232,185,74,0);}
   }
 
-  .vine-track{
-    margin-top:16px;
-    height:10px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.14);
-    overflow:hidden;
-    position:relative;
+  /* ===== D-PAD (walk controller) ===== */
+  .dpad-wrap{display:flex;justify-content:center;align-items:center;padding:14px 18px 8px;gap:6px;}
+  .dpad{display:grid;grid-template-columns:52px 52px 52px;grid-template-rows:44px 44px;gap:5px;}
+  .dbtn{
+    border:none;border-radius:12px;background:var(--forest-deep);color:#fff;
+    font-size:1.05rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transition:background .15s ease, transform .1s ease;line-height:1;gap:2px;font-weight:800;
   }
-  .vine-fill{
-    height:100%;
-    background:linear-gradient(90deg, var(--moss), var(--sun));
-    border-radius:999px;
-    transition:width .5s ease;
-  }
-  .progress-label{
-    margin-top:8px;
-    font-size:0.78rem;
-    color:var(--moss-soft);
-    display:flex;
-    justify-content:space-between;
-  }
+  .dbtn span.lbl{font-size:0.58rem;font-weight:800;letter-spacing:0.2px;}
+  .dbtn:active:not(:disabled){transform:scale(0.92);}
+  .dbtn:disabled{background:#dde8e0;color:#a9bcb0;cursor:default;}
+  .dbtn.fwd{grid-column:1 / span 3;grid-row:1;}
+  .dbtn.left{grid-column:1;grid-row:2;}
+  .dbtn.back{grid-column:2;grid-row:2;}
+  .dbtn.right{grid-column:3;grid-row:2;}
+  .dpad-hint{font-size:0.76rem;color:#5c7a6c;text-align:center;padding:0 20px 14px;}
 
-  main.body{
-    padding:26px;
+  /* ===== MODAL (question / help) ===== */
+  .modal-overlay{
+    position:absolute;inset:0;background:rgba(18,43,33,0.55);
+    display:flex;align-items:flex-end;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:5;
   }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal-card{
+    background:#fff;width:100%;border-radius:24px 24px 0 0;padding:22px 22px 26px;
+    max-height:90%;overflow-y:auto;transform:translateY(24px);transition:transform .25s ease;
+  }
+  .modal-overlay.open .modal-card{transform:translateY(0);}
 
-  .q-count{
-    font-size:0.78rem;
-    font-weight:800;
-    color:var(--forest-leaf);
-    letter-spacing:0.3px;
-    margin-bottom:10px;
-  }
-  .question{
-    font-family:'Fraunces', serif;
-    font-size:1.28rem;
-    line-height:1.5;
-    font-weight:600;
-    color:var(--forest-deep);
-    margin:0 0 20px;
-  }
+  .timer-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .timer-num{font-family:'Fraunces', serif;font-weight:700;font-size:1.05rem;color:var(--forest-mid);min-width:30px;text-align:center;}
+  .timer-track{flex:1;height:10px;border-radius:999px;background:#e4f1e7;overflow:hidden;}
+  .timer-fill{height:100%;border-radius:999px;background:var(--moss);transition:width 1s linear, background .3s ease;}
+  .timer-fill.warn{background:var(--sun);}
+  .timer-fill.danger{background:var(--berry);}
 
-  .choices{
-    display:flex;
-    flex-direction:column;
-    gap:11px;
-  }
+  .q-count{font-size:0.78rem;font-weight:800;color:var(--forest-leaf);letter-spacing:0.3px;margin-bottom:8px;}
+  .question{font-family:'Fraunces', serif;font-size:1.2rem;line-height:1.5;font-weight:600;color:var(--forest-deep);margin:0 0 18px;}
+  .choices{display:flex;flex-direction:column;gap:11px;}
   .choice{
-    text-align:left;
-    padding:14px 16px;
-    border-radius:14px;
-    border:1.5px solid #d7e9dc;
-    background:#f7fbf8;
-    font-family:'Nunito Sans', sans-serif;
-    font-size:0.98rem;
-    color:var(--forest-deep);
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    transition:border-color .15s ease, background .15s ease, transform .1s ease;
-    width:100%;
+    text-align:left;padding:14px 16px;border-radius:14px;border:1.5px solid #d7e9dc;background:#f7fbf8;
+    font-family:'Nunito Sans', sans-serif;font-size:0.98rem;color:var(--forest-deep);
+    cursor:pointer;display:flex;align-items:center;gap:12px;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;width:100%;
   }
   .choice .tag{
-    flex:0 0 auto;
-    width:26px;height:26px;
-    border-radius:50%;
-    background:#dff0e3;
-    color:var(--forest-mid);
-    font-weight:800;
-    font-size:0.8rem;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#dff0e3;color:var(--forest-mid);
+    font-weight:800;font-size:0.8rem;display:flex;align-items:center;justify-content:center;
   }
-  .choice:hover:not(:disabled){
-    border-color:var(--moss);
-    background:#eef8f0;
-    transform:translateY(-1px);
-  }
+  .choice:hover:not(:disabled){border-color:var(--moss);background:#eef8f0;transform:translateY(-1px);}
   .choice:disabled{cursor:default;}
-  .choice.correct{
-    border-color:var(--forest-leaf);
-    background:#e2f3e6;
-  }
+  .choice.correct{border-color:var(--forest-leaf);background:#e2f3e6;}
   .choice.correct .tag{background:var(--forest-leaf);color:#fff;}
-  .choice.wrong{
-    border-color:var(--berry);
-    background:#fbeae9;
-  }
+  .choice.wrong{border-color:var(--berry);background:#fbeae9;}
   .choice.wrong .tag{background:var(--berry);color:#fff;}
 
-  .feedback{
-    margin-top:16px;
-    padding:14px 16px;
-    border-radius:14px;
-    font-size:0.9rem;
-    line-height:1.55;
-    display:none;
+  .popup{
+    margin-top:14px;padding:12px 16px;border-radius:14px;font-size:0.86rem;line-height:1.5;
+    font-weight:700;display:none;align-items:center;gap:8px;
   }
-  .feedback.show{display:block;}
-  .feedback.right{background:#e2f3e6;color:var(--forest-deep);border-left:4px solid var(--forest-leaf);}
-  .feedback.miss{background:#fbeae9;color:var(--forest-deep);border-left:4px solid var(--berry);}
-  .feedback b{color:var(--forest-mid);}
+  .popup.show{display:flex;}
+  .popup.right{background:#e2f3e6;color:var(--forest-mid);border-left:4px solid var(--forest-leaf);}
+  .popup.miss{background:#fbeae9;color:var(--berry);border-left:4px solid var(--berry);}
+  .popup .pts{margin-left:auto;font-family:'Fraunces', serif;font-size:1rem;}
 
-  .next-btn{
-    margin-top:18px;
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:14px;
-    background:var(--forest-deep);
-    color:#fff;
-    font-family:'Nunito Sans', sans-serif;
-    font-weight:800;
-    font-size:0.98rem;
-    cursor:pointer;
-    display:none;
-    transition:background .15s ease;
+  .continue-btn{
+    margin-top:16px;width:100%;padding:13px;border:none;border-radius:14px;
+    background:var(--forest-deep);color:#fff;font-weight:800;font-size:0.95rem;cursor:pointer;display:none;
   }
-  .next-btn:hover{background:var(--forest-mid);}
-  .next-btn.show{display:block;}
+  .continue-btn.show{display:block;}
 
-  /* Start & End screens */
-  .panel{
-    padding:38px 30px 34px;
-    text-align:center;
+  .help-content{text-align:left;font-size:0.9rem;line-height:1.85;color:var(--forest-deep);}
+  .help-content h3{font-family:'Fraunces', serif;margin:0 0 10px;font-size:1.2rem;color:var(--forest-mid);}
+  .help-close{
+    margin-top:16px;width:100%;padding:13px;border:none;border-radius:14px;
+    background:var(--forest-deep);color:#fff;font-weight:800;font-size:0.95rem;cursor:pointer;
   }
+
+  /* ===== PANELS ===== */
+  .panel{padding:38px 30px 34px;text-align:center;}
   .badge-icon{
-    width:76px;height:76px;
-    margin:0 auto 18px;
-    border-radius:50%;
+    width:76px;height:76px;margin:0 auto 18px;border-radius:50%;
     background:linear-gradient(135deg, var(--moss), var(--forest-leaf));
-    display:flex;align-items:center;justify-content:center;
-    font-size:2rem;
+    display:flex;align-items:center;justify-content:center;font-size:2rem;
     box-shadow:0 12px 24px -8px rgba(47,122,92,0.5);
   }
-  .panel h2{
-    font-family:'Fraunces', serif;
-    font-size:1.6rem;
-    margin:0 0 10px;
-    color:var(--forest-deep);
-  }
-  .panel p{
-    color:#4c6559;
-    font-size:0.95rem;
-    line-height:1.6;
-    max-width:420px;
-    margin:0 auto 26px;
+  .panel h2{font-family:'Fraunces', serif;font-size:1.6rem;margin:0 0 10px;color:var(--forest-deep);}
+  .panel p{color:#4c6559;font-size:0.95rem;line-height:1.6;max-width:420px;margin:0 auto 22px;}
+  .rules{
+    text-align:left;background:#f4faf5;border-radius:14px;padding:14px 18px;
+    max-width:420px;margin:0 auto 24px;font-size:0.88rem;line-height:1.9;color:var(--forest-deep);
   }
   .start-btn, .retry-btn{
-    padding:14px 34px;
-    border:none;
-    border-radius:999px;
-    background:var(--forest-deep);
-    color:#fff;
-    font-weight:800;
-    font-size:1rem;
-    cursor:pointer;
+    padding:14px 34px;border:none;border-radius:999px;background:var(--forest-deep);
+    color:#fff;font-weight:800;font-size:1rem;cursor:pointer;
     transition:transform .15s ease, background .15s ease;
   }
   .start-btn:hover, .retry-btn:hover{background:var(--forest-mid);transform:translateY(-2px);}
 
-  .score-big{
-    font-family:'Fraunces', serif;
-    font-size:3.2rem;
-    font-weight:700;
-    color:var(--forest-mid);
-    margin:6px 0 2px;
-  }
-  .score-sub{
-    font-size:0.9rem;
-    color:#5c7a6c;
-    margin-bottom:24px;
-  }
+  .score-big{font-family:'Fraunces', serif;font-size:3rem;font-weight:700;color:var(--forest-mid);margin:6px 0 2px;}
+  .score-sub{font-size:0.9rem;color:#5c7a6c;margin-bottom:18px;}
   .rank-chip{
-    display:inline-block;
-    padding:6px 16px;
-    border-radius:999px;
-    background:#dff0e3;
-    color:var(--forest-mid);
-    font-weight:800;
-    font-size:0.82rem;
-    margin-bottom:22px;
+    display:inline-block;padding:6px 16px;border-radius:999px;background:#dff0e3;
+    color:var(--forest-mid);font-weight:800;font-size:0.82rem;margin-bottom:20px;
   }
-
-  .hidden{display:none !important;}
-
-  @media (max-width:420px){
-    .panel{padding:30px 20px;}
-    header.top{padding:18px 20px;}
-    main.body{padding:20px;}
-    .question{font-size:1.12rem;}
-  }
-</style>
-</head>
-<body>
-
-<svg class="leaf-deco tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M10 190C10 100 60 20 190 10C180 130 110 190 10 190Z" fill="#6fbf8b" opacity="0.35"/>
-</svg>
-<svg class="leaf-deco br" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M10 190C10 100 60 20 190 10C180 130 110 190 10 190Z" fill="#1f5c46" opacity="0.3"/>
-</svg>
-
-<div class="stage">
-  <div class="card">
-
-    <!-- START SCREEN -->
-    <div id="startScreen" class="panel">
-      <div class="badge-icon">🌿</div>
-      <h2>ป่าแห่งพฤติกรรม</h2>
-      <p>ทดสอบความเข้าใจเรื่อง "พฤติกรรมของสัตว์" 15 ข้อ ครอบคลุมพฤติกรรมแต่กำเนิด พฤติกรรมจากการเรียนรู้ และพฤติกรรมทางสังคม พร้อมคำอธิบายท้ายทุกข้อ</p>
-      <button class="start-btn" onclick="startQuiz()">เริ่มผจญป่า</button>
-    </div>
-
-    <!-- QUIZ SCREEN -->
-    <div id="quizScreen" class="hidden">
-      <header class="top">
-        <h1>ป่าแห่งพฤติกรรม</h1>
-        <p class="tagline">เกมทายพฤติกรรมสัตว์</p>
-        <div class="vine-track"><div class="vine-fill" id="vineFill" style="width:0%"></div></div>
-        <div class="progress-label">
-          <span id="progressText">ข้อ 1 / 15</span>
-          <span id="scoreText">คะแนน 0</span>
-        </div>
-      </header>
-      <main class="body">
-        <div class="q-count" id="topicLabel">หัวข้อ</div>
-        <p class="question" id="questionText">คำถาม</p>
-        <div class="choices" id="choicesBox"></div>
-        <div class="feedback" id="feedbackBox"></div>
-        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">ข้อถัดไป →</button>
-      </main>
-    </div>
-
-    <!-- END SCREEN -->
-    <div id="endScreen" class="panel hidden">
-      <div class="badge-icon">🍃</div>
-      <h2>สรุปผลการผจญป่า</h2>
-      <div class="score-big" id="finalScore">0/15</div>
-      <div class="score-sub">คำตอบที่ถูกต้อง</div>
-      <div class="rank-chip" id="rankChip">นักสำรวจป่า</div>
-      <br>
-      <button class="retry-btn" onclick="restartQuiz()">ลองอีกครั้ง</button>
-    </div>
-
-  </div>
-</div>
-
-<script>
-const questions = [
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "การที่แมลงบินเข้าหาแสงไฟในเวลากลางคืน เป็นพฤติกรรมประเภทใด",
-    choices: ["รีเฟล็กซ์ (Reflex)", "แทกซิส (Taxis)", "คิเนซิส (Kinesis)", "การเรียนรู้แบบลองผิดลองถูก"],
-    answer: 1,
-    explain: "แทกซิส (Taxis) คือการเคลื่อนที่เข้าหาหรือหนีสิ่งเร้าอย่างมีทิศทางแน่นอน เช่น ผีเสื้อกลางคืนบินเข้าหาแสงไฟ เรียกว่า phototaxis"
-  },
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "มดหรือแมลงที่เคลื่อนที่เร็วขึ้นเมื่ออยู่ในที่แห้งแล้งเพื่อหาความชื้น โดยไม่มีทิศทางตายตัว จัดเป็นพฤติกรรมแบบใด",
-    choices: ["Taxis", "Kinesis", "Imprinting", "Fixed Action Pattern"],
-    answer: 1,
-    explain: "Kinesis คือการเปลี่ยนอัตราเร็วของการเคลื่อนที่ตอบสนองต่อสิ่งเร้า แต่ไม่มีทิศทางที่แน่นอนเหมือน Taxis"
-  },
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "เมื่อแตะขาของนกกระเรียนขณะฟักไข่แล้วนกยกขาหนีทันที เป็นตัวอย่างของพฤติกรรมชนิดใด",
-    choices: ["รีเฟล็กซ์ (Reflex)", "Imprinting", "Insight Learning", "Habituation"],
-    answer: 0,
-    explain: "รีเฟล็กซ์เป็นการตอบสนองอย่างรวดเร็วและอัตโนมัติต่อสิ่งเร้า ควบคุมผ่านไขสันหลังโดยไม่ผ่านการคิดของสมองส่วนบน"
-  },
-  {
-    topic: "พฤติกรรมแต่กำเนิด",
-    q: "แม่นกบางชนิดจะกกไข่ที่หล่นออกจากรังโดยกลิ้งกลับเข้ารังด้วยลำดับขั้นตอนที่ตายตัวทุกครั้ง แม้ไข่จะหลุดมืออีกระหว่างทางก็ยังทำจนจบขั้นตอน พฤติกรรมนี้เรียกว่าอะไร",
-    choices: ["Fixed Action Pattern (FAP)", "Operant Conditioning", "Trial and Error", "Imitation"],
-    answer: 0,
-    explain: "Fixed Action Pattern คือพฤติกรรมแต่กำเนิดที่เมื่อเริ่มแล้วจะดำเนินไปตามลำดับขั้นตอนตายตัวจนจบ แม้สิ่งเร้าจะหายไประหว่างทาง"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "ลูกห่านที่ฟักออกจากไข่แล้วเดินตามสิ่งเคลื่อนไหวชิ้นแรกที่เห็น แม้จะเป็นมนุษย์แทนแม่ห่าน เป็นการค้นพบของนักวิทยาศาสตร์ท่านใด และเรียกพฤติกรรมนี้ว่าอะไร",
-    choices: ["พาฟลอฟ - Conditioning", "สกินเนอร์ - Operant Learning", "ลอเรนซ์ - Imprinting", "ฟอน ฟริช - Communication"],
-    answer: 2,
-    explain: "คอนราด ลอเรนซ์ (Konrad Lorenz) ศึกษาพฤติกรรม Imprinting หรือการฝังใจในลูกห่าน ซึ่งเกิดขึ้นในช่วงเวลาวิกฤต (critical period) หลังฟักไข่"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "หอยทากที่หดตัวเมื่อถูกสัมผัสครั้งแรก แต่เมื่อถูกสัมผัสซ้ำๆ โดยไม่เป็นอันตราย จะค่อยๆ ไม่หดตัวอีก พฤติกรรมนี้เรียกว่าอะไร",
-    choices: ["Habituation", "Sensitization", "Imprinting", "Latent Learning"],
-    answer: 0,
-    explain: "Habituation (การเคยชิน) คือการที่สัตว์เรียนรู้ที่จะลดหรือหยุดการตอบสนองต่อสิ่งเร้าที่ไม่เป็นอันตรายและเกิดขึ้นซ้ำๆ"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "การที่สุนัขของพาฟลอฟน้ำลายไหลเมื่อได้ยินเสียงกระดิ่ง หลังจากถูกฝึกให้เสียงกระดิ่งดังพร้อมกับให้อาหารซ้ำๆ จัดเป็นการเรียนรู้แบบใด",
-    choices: ["Operant Conditioning", "Classical Conditioning", "Insight Learning", "Habituation"],
-    answer: 1,
-    explain: "Classical Conditioning (การวางเงื่อนไขแบบคลาสสิก) เป็นการเชื่อมโยงสิ่งเร้าที่เป็นกลาง (เสียงกระดิ่ง) เข้ากับสิ่งเร้าที่ก่อให้เกิดการตอบสนองตามธรรมชาติ (อาหาร) จนเสียงกระดิ่งเพียงอย่างเดียวก็กระตุ้นการตอบสนองได้"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "หนูที่กดคันโยกในกล่องทดลองแล้วได้รับอาหารเป็นรางวัล ทำให้กดคันโยกบ่อยขึ้นเรื่อยๆ เป็นตัวอย่างของการเรียนรู้แบบใด ตามแนวคิดของสกินเนอร์",
-    choices: ["Classical Conditioning", "Operant Conditioning", "Imprinting", "Habituation"],
-    answer: 1,
-    explain: "Operant Conditioning คือการเรียนรู้จากผลของการกระทำ พฤติกรรมที่ได้รับรางวัล (reinforcement) มีแนวโน้มจะเกิดซ้ำมากขึ้น"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "ลิงชิมแปนซีที่มองเห็นกล้วยแขวนอยู่สูงเกินเอื้อม แล้วจู่ๆ ก็นำกล่องมาวางซ้อนกันเพื่อปีนขึ้นไปหยิบ โดยไม่เคยลองผิดลองถูกมาก่อน เป็นพฤติกรรมประเภทใด",
-    choices: ["Trial and Error", "Insight Learning", "Imprinting", "Habituation"],
-    answer: 1,
-    explain: "Insight Learning (การหยั่งรู้) คือการแก้ปัญหาอย่างฉับพลันโดยอาศัยการมองเห็นความสัมพันธ์ขององค์ประกอบต่างๆ ในสถานการณ์ พบมากในสัตว์ที่มีสมองพัฒนาสูง เช่น ไพรเมต"
-  },
-  {
-    topic: "พฤติกรรมจากการเรียนรู้",
-    q: "การที่ลูกนกเรียนรู้เพลงร้องที่ถูกต้องของสปีชีส์ตนเองได้ก็ต่อเมื่อได้ยินเสียงร้องของพ่อแม่ในช่วงอายุหนึ่งเท่านั้น หากพ้นช่วงนี้ไปแล้วจะไม่สามารถเรียนรู้ได้อีก แสดงถึงแนวคิดใด",
-    choices: ["Operant Conditioning", "Critical Period", "Habituation", "Latent Learning"],
-    answer: 1,
-    explain: "Critical Period (ช่วงเวลาวิกฤต) คือช่วงเวลาที่จำกัดในการพัฒนาที่สัตว์จะเรียนรู้พฤติกรรมบางอย่างได้ดีที่สุด หากพ้นช่วงนี้ไปการเรียนรู้จะยากขึ้นมากหรือเกิดขึ้นไม่ได้เลย"
-  },
-  {
-    topic: "พฤติกรรมทางสังคม",
-    q: "ผึ้งงานที่กลับมาจากแหล่งอาหารแล้วเต้นรำเป็นรูปเลขแปด (waggle dance) เพื่อบอกทิศทางและระยะทางของแหล่งอาหารแก่ผึ้งตัวอื่น เป็นการสื่อสารที่ค้นพบโดยใคร",
-    choices: ["คอนราด ลอเรนซ์", "อีวาน พาฟลอฟ", "คาร์ล ฟอน ฟริช", "บี.เอฟ. สกินเนอร์"],
-    answer: 2,
-    explain: "คาร์ล ฟอน ฟริช (Karl von Frisch) เป็นผู้ค้นพบและถอดรหัสภาษาเต้นรำของผึ้ง (bee dance language) ซึ่งบอกทั้งทิศทางและระยะทางของแหล่งอาหาร"
-  },
-  {
-    topic: "พฤติกรรมทางสังคม",
-    q: "การที่สิงโตตัวผู้ปัสสาวะรดพุ่มไม้หรือต้นไม้เพื่อบอกอาณาเขตแก่สิงโตตัวอื่น เป็นการสื่อสารโดยใช้สิ่งใดเป็นหลัก",
-    choices: ["เสียง (Auditory signal)", "สารเคมี (Chemical signal/Pheromone)", "การสัมผัส (Tactile signal)", "ท่าทาง (Visual signal)"],
-    answer: 1,
-    explain: "การทำเครื่องหมายอาณาเขตด้วยกลิ่นเป็นการสื่อสารด้วยสารเคมี (ฟีโรโมน) ซึ่งคงอยู่ได้นานและสื่อข้อมูลได้แม้ผู้ส่งสารไม่อยู่ ณ ที่นั้นแล้ว",
-  },
-  {
-    topic: "พฤติกรรมทางสังคม",
-    q: "ระบบสังคมของสัตว์ที่มีการแบ่งวรรณะชัดเจน เช่น ผึ้ง มด ปลวก โดยมีนางพญาทำหน้าที่สืบพันธุ์และมีตัวงานทำหน้าที่หาอาหารและป้องกันรัง เรียกว่าสังคมแบบใด",
-    choices: ["Social Hierarchy", "Eusociality", "Territoriality", "Dominance Hierarchy"],
-    answer: 1,
-    explain: "Eusociality (ยูโซเชียลลิตี) คือระบบสังคมขั้นสูงสุดที่มีการแบ่งวรรณะ (caste) ทำหน้าที่เฉพาะ และมีการเลี้ยงดูลูกร่วมกันในรุ่นต่างๆ พบในแมลงสังคม เช่น ผึ้ง มด ปลวก"
-  },
-  {
-    topic: "พฤติกรรมทางสังคม",
-    q: "ไก่ในฝูงที่มีลำดับการจิกกัน (pecking order) ชัดเจน โดยตัวที่มีอำนาจสูงสุดสามารถจิกตัวอื่นได้ทุกตัวโดยไม่ถูกจิกกลับ เป็นตัวอย่างของพฤติกรรมสังคมแบบใด",
-    choices: ["Territoriality", "Dominance Hierarchy", "Altruism", "Imprinting"],
-    answer: 1,
-    explain: "Dominance Hierarchy (ลำดับความเป็นใหญ่) คือการจัดลำดับชั้นทางสังคมในฝูงสัตว์ ช่วยลดความขัดแย้งและการต่อสู้แย่งชิงทรัพยากรภายในกลุ่ม"
-  },
-  {
-    topic: "พฤติกรรมทางสังคม",
-    q: "ตัวเมียของสัตว์เลี้ยงลูกด้วยนมบางชนิด เช่น มีร์แคต จะยอมสละโอกาสสืบพันธุ์ของตนเพื่อช่วยเลี้ยงดูลูกของตัวอื่นในฝูงที่มีความสัมพันธ์ทางสายเลือดใกล้ชิด พฤติกรรมนี้เรียกว่าอะไร และอธิบายด้วยแนวคิดใด",
-    choices: ["Territoriality อธิบายด้วย Resource Defense", "Altruism อธิบายด้วย Kin Selection", "Imprinting อธิบายด้วย Critical Period", "Aggression อธิบายด้วย Dominance"],
-    answer: 1,
-    explain: "Altruism (พฤติกรรมเสียสละ) ที่เกิดกับญาติใกล้ชิดอธิบายได้ด้วยแนวคิด Kin Selection ซึ่งเสนอว่าการช่วยเหลือญาติที่มียีนร่วมกันช่วยเพิ่มโอกาสถ่ายทอดยีนของตนเองในทางอ้อม"
-  }
-];
-
-let currentIndex = 0;
-let score = 0;
-let answered = false;
-
-const startScreen = document.getElementById('startScreen');
-const quizScreen = document.getElementById('quizScreen');
-const endScreen = document.getElementById('endScreen');
-const vineFill = document.getElementById('vineFill');
-const progressText = document.getElementById('progressText');
-const scoreText = document.getElementById('scoreText');
-const topicLabel = document.getElementById('topicLabel');
-const questionText = document.getElementById('questionText');
-const choicesBox = document.getElementById('choicesBox');
-const feedbackBox = document.getElementById('feedbackBox');
-const nextBtn = document.getElementById('nextBtn');
-const finalScore = document.getElementById('finalScore');
-const rankChip = document.getElementById('rankChip');
-
-const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-
-function startQuiz(){
-  currentIndex = 0;
-  score = 0;
-  startScreen.classList.add('hidden');
-  endScreen.classList.add('hidden');
-  quizScreen.classList.remove('hidden');
-  renderQuestion();
-}
-
-function renderQuestion(){
-  answered = false;
-  const item = questions[currentIndex];
-
-  topicLabel.textContent = item.topic;
-  questionText.textContent = item.q;
-
-  const progressPct = (currentIndex / questions.length) * 100;
-  vineFill.style.width = progressPct + '%';
-  progressText.textContent = `ข้อ ${currentIndex + 1} / ${questions.length}`;
-  scoreText.textContent = `คะแนน ${score}`;
-
-  choicesBox.innerHTML = '';
-  item.choices.forEach((choiceLabel, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'choice';
-    btn.innerHTML = `<span class="tag">${letters[idx]}</span><span>${choiceLabel}</span>`;
-    btn.onclick = () => selectAnswer(idx);
-    choicesBox.appendChild(btn);
-  });
-
-  feedbackBox.className = 'feedback';
-  feedbackBox.textContent = '';
-  nextBtn.classList.remove('show');
-}
-
-function selectAnswer(idx){
-  if(answered) return;
-  answered = true;
-
-  const item = questions[currentIndex];
-  const buttons = choicesBox.querySelectorAll('.choice');
-  buttons.forEach(b => b.disabled = true);
-
-  const isCorrect = idx === item.answer;
-  if(isCorrect){
-    score++;
-    buttons[idx].classList.add('correct');
-  } else {
-    buttons[idx].classList.add('wrong');
-    buttons[item.answer].classList.add('correct');
-  }
-
-  scoreText.textContent = `คะแนน ${score}`;
-
-  feedbackBox.classList.add('show');
-  if(isCorrect){
-    feedbackBox.classList.add('right');
-    feedbackBox.classList.remove('miss');
-    feedbackBox.innerHTML = `<b>ถูกต้อง!</b> ${item.explain}`;
-  } else {
-    feedbackBox.classList.add('miss');
-    feedbackBox.classList.remove('right');
-    feedbackBox.innerHTML = `<b>คำตอบที่ถูกคือ "${item.choices[item.answer]}"</b><br>${item.explain}`;
-  }
-
-  nextBtn.classList.add('show');
-  nextBtn.textContent = (currentIndex === questions.length - 1) ? 'ดูผลสรุป →' : 'ข้อถัดไป →';
-}
-
-function nextQuestion(){
-  currentIndex++;
-  if(currentIndex >= questions.length){
-    showEndScreen();
-  } else {
-    renderQuestion();
-  }
-}
-
-function showEndScreen(){
-  vineFill.style.width = '100%';
-  quizScreen.classList.add('hidden');
-  endScreen.classList.remove('hidden');
-  finalScore.textContent = `${score}/${questions.length}`;
-
-  let rank = 'นักสำรวจป่า';
-  const pct = score / questions.length;
-  if(pct === 1){
-    rank = 'ปรมาจารย์แห่งป่า 🌟';
-  } else if(pct >= 0.8){
-    rank = 'ผู้เชี่ยวชาญพฤติกรรมสัตว์';
-  } else if(pct >= 0.6){
-    rank = 'นักสำรวจผู้ช่ำชอง';
-  } else if(pct >= 0.4){
-    rank = 'นักสำรวจฝึกหัด';
-  } else {
-    rank = 'ผู้เริ่มต้นสำรวจป่า';
-  }
-  rankChip.textContent = rank;
-}
-
-function restartQuiz(){
-  startQuiz();
-}
-</script>
-</body>
-</html>
+  .toggle-review{
+    background:none;border:none;color:var(--forest-leaf);font-weight:800;font-si
